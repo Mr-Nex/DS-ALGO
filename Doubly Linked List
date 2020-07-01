@@ -1,0 +1,220 @@
+public class LinkedList {
+
+	Node head = null;
+	Node tail = null;
+	
+	public static void main(String[] args) {
+		
+		LinkedList list = new LinkedList();
+		
+		list.push(list, 10);
+		list.push(list, 20);
+		list.push(list, 30);
+		list.push(list, 40);
+		list.push(list, 50);
+		list.display(list);
+		list.pop(list);		
+		list.display(list);
+		list.unshift(list, 50);		
+		list.display(list);
+		list.shift(list);	
+		list.display(list);
+		int size = list.traverse(list);
+		
+		list.insertAtIndex(list, 50, 3, size);		
+		list.display(list);
+		
+		size = list.traverse(list);
+		list.removeAtIndex(list, 3, size);
+		
+		list.display(list);
+		
+	}
+	
+	class Node{
+		int data;
+		Node next;
+		Node prev;
+		
+		Node(int d){
+			data = d;
+			next = null;
+			prev = null;
+		}
+	}
+	
+	void push(LinkedList list, int data) {
+		Node newNode = new Node(data);
+		if(list.head == null) {
+			list.head = newNode;
+			list.tail = newNode;
+		}else {			
+			list.tail.next = newNode;
+			newNode.prev = list.tail;
+			list.tail = newNode;
+		}
+	}
+	
+	void pop(LinkedList list) {
+		Node current = list.head;
+		
+		if(current == null) {
+			System.out.println("Empty List !!!");
+		}else if(current == list.tail) {
+			list.head = null;
+			list.tail = null;
+		}else {
+			list.tail.prev.next = null;
+			list.tail = list.tail.prev;
+		}
+	}
+	
+	void unshift(LinkedList list, int data) {
+		Node newNode = new Node(data);
+		if(list.head == null) {
+			list.head = newNode;
+			list.tail = newNode;
+		}else {
+			list.head.prev = newNode;
+			newNode.next = list.head;
+			list.head = newNode;
+		}
+	}
+	
+	void shift(LinkedList list) {
+		Node current = list.head;
+		if(current == null) {
+			System.out.println("Empty List !!!");
+		}else {
+			current.next.prev = null;
+			list.head = current.next;
+			current.next = null;
+		}
+	}
+	
+	void insertAtIndex(LinkedList list, int data, int index, int size) {
+		Node newNode = new Node(data);
+		int mid = size/2;
+		if(index <= mid) {
+			Node current = list.head;
+			Node prev = null;
+			int i=0;
+			if(current != null && i == index) {
+				current.prev = newNode;
+				newNode.next = current;
+				list.head = newNode;
+				return;
+			}
+			while(i < mid+1 && i != index) {
+				i++;
+				current = current.next;
+			}
+			if(i < mid+1) {
+				current.prev.next = newNode;
+				newNode.prev = current.prev;
+				current.prev = newNode;
+				newNode.next = current;		
+			}
+		}else {
+			Node current = list.tail;
+			Node prev = null;
+			int i=size-1;
+			if(current != null && size == index) {
+				newNode.next = current.next;
+				current.next = newNode;
+				newNode.prev = current;
+				list.tail = newNode;
+				return;
+			}
+			while(i > mid && i != index) {
+				i--;
+				current = current.prev;
+			}
+			if(i > mid) {
+				current.prev.next = newNode;
+				newNode.prev = current.prev;
+				current.prev = newNode;
+				newNode.next = current;	
+			}
+		}
+	}
+	
+	void removeAtIndex(LinkedList list, int index, int size) {
+		
+		int mid = size/2;
+		
+		if(index <= mid) {
+			Node current = list.head;
+			int i=0;
+			if(current != null && i == index) {
+				if(current.next != null) {
+					current.next.prev = null;
+					list.head = current.next;
+					current.next = null;
+				}else {
+					list.head = null;
+					list.tail = null;
+				}
+				return;
+			}
+			while(i < mid+1 && i != index) {
+				i++;
+				current = current.next;
+			}
+			if(i < mid+1) {
+				current.prev.next = current.next;
+				current.next.prev = current.prev;
+			}
+		}else {
+			Node current = list.tail;
+			int i=size-1;
+			if(current != null && i == index) {
+				if(current.prev != null) {
+					current.prev.next = null;
+					list.tail = current.prev;
+					current.prev = null;
+				}else {
+					list.head = null;
+					list.tail = null;
+				}
+				return;
+			}
+			while(i > mid && i != index) {
+				i--;
+				current = current.prev;
+			}
+			if(i > mid) {
+				current.prev.next = current.next;
+				current.next.prev = current.prev;
+			}
+		}
+	}
+	
+	int traverse(LinkedList list) {
+		Node current = list.head;
+		int size=0;
+		if(current == null) {
+			return 0;
+		}
+		while(current != null) {
+			size++;
+			current = current.next;
+		}
+		return size;
+	}
+	
+	void display(LinkedList list) {
+		Node current = list.head;
+		
+		if(current == null) {
+			System.out.println("Empty List !!!");
+			return;
+		}
+		while(current != null) {
+			System.out.print(current.data+" ");
+			current = current.next;
+		}
+		System.out.println();
+	}
+	
+}
