@@ -1,0 +1,106 @@
+public class BST {
+	Node root;
+	BST(){		
+		this.root = null;
+	}
+	
+	class Node{
+		int data;
+		Node left, right;
+		Node(int data){
+			this.data = data;
+			this.left = null;
+			this.right = null;
+		}
+	}
+	
+	void insert(BST tree, int data) {
+		Node newNode = new Node(data);
+		if(tree.root == null) {
+			tree.root = newNode;
+			return;
+		}else {
+			Node current = this.root;
+			while(true) {
+				if(data < current.data) {
+					if(current.left == null) {
+						current.left = newNode;
+						return;
+					}else {
+						current = current.left;
+					}
+				}else if(data > current.data) {
+					if(current.right == null) {
+						current.right = newNode;
+						return;
+					}else {
+						current = current.right;
+					}
+				}else {
+					System.out.println("It's already there !!!");
+					return;
+				}
+			}
+		}
+	}
+	
+	void search(BST tree, int find) {		
+		if(tree.root == null) {
+			System.out.println("Empty Tree!!!");
+			return;
+		}
+		
+		Node current = this.root;
+		while(true) {
+			if(find == current.data) {
+				System.out.println("Found It");
+				return;
+			}
+			if(find < current.data) {
+				if(current.left == null) {
+					System.out.println("Not Found !!!");
+					return;
+				}else {
+					current = current.left;
+				}
+			}else if(find > current.data) {
+				if(current.right == null) {
+					System.out.println("Not Found !!!");
+					return;
+				}else {
+					current = current.right;
+				}
+			}
+		}
+		
+	}
+	
+	void inOrder(Node root) {
+		if(root != null) {
+			inOrder(root.left);
+			System.out.print(root.data+" ");
+			inOrder(root.right);
+		}
+	}
+	
+	public static void main(String[] args) {
+		BST tree = new BST();
+		
+		tree.search(tree,10);
+		
+		tree.insert(tree,10);
+		tree.insert(tree,5);
+		tree.insert(tree,13);
+		tree.insert(tree,7);
+		tree.insert(tree,11);
+		tree.insert(tree,16);
+		tree.insert(tree,2);
+		tree.insert(tree,2);
+		
+		tree.search(tree, 10);
+		tree.search(tree, 11);
+		tree.search(tree, 50);
+		
+		tree.inOrder(tree.root);
+	}
+}
