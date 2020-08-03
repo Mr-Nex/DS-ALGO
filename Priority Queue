@@ -1,0 +1,111 @@
+import java.util.*;
+public class PriorityQueue {
+	Node[] pq;
+	int size, limit;
+	PriorityQueue(int limit){
+		this.limit = limit;
+		pq = new Node[this.limit];
+		this.size=0;
+	}
+	
+	class Node{
+		int val, priority;
+		
+		Node(int val, int priority){
+			this.val = val;
+			this.priority = priority;
+		}
+	}
+	
+	//    Implementing Priority Queue using Min Binary Heap (case: min. priority is better) ...
+	
+	void enqueue(int val, int priority) {
+		if(this.size < this.limit) {
+			Node add = new Node(val, priority);
+			pq[this.size++] = add;
+			if(this.size > 1) {
+				int child = this.size-1;
+				while(child > 0) {
+					int parent = (child-1)/2;
+					if(pq[parent].priority>pq[child].priority) {
+						Node tmp = pq[child];
+						pq[child] = pq[parent];
+						pq[parent] = tmp;
+						child = parent;
+					}else {
+						break;
+					}
+				}
+			}
+		}else {
+			System.out.println("No Space Left");
+		}
+	}
+	
+	Node dequeue() {
+		if(this.size>0) {
+			Node ans = pq[0];
+			pq[0] = pq[this.size-1];
+			this.size--;
+			
+			int parent = 0;
+			while(parent < this.size-1) {
+				int Lchild = 2*parent+1;
+				int Rchild = 2*parent+2;
+				
+				Node swap = null;
+				int ind = 0;
+				if(Lchild<this.size) {
+					if(pq[Lchild].priority < pq[parent].priority) {				
+					swap = pq[Lchild];
+					ind = Lchild;
+					}
+				}else {
+					break;
+				}
+				if(Rchild<this.size && (swap == null || (pq[Rchild].priority<pq[Lchild].priority))) {
+					if(pq[Rchild].priority < pq[parent].priority) {
+						swap = pq[Rchild];
+						ind = Rchild;
+					}
+				}
+				if(swap == null) {
+					break;
+				}
+				pq[ind] = pq[parent];
+				pq[parent] = swap;
+				parent = ind;
+			}
+			return ans;
+		}else {
+			return null;
+		}
+	}
+	
+	public static void main(String[] args) {
+		PriorityQueue prq = new PriorityQueue(10);
+		prq.enqueue(41,9);
+		prq.enqueue(39,2);
+		prq.enqueue(33,3);
+		prq.enqueue(18,5);
+		prq.enqueue(27,6);
+		prq.enqueue(12,7);
+		prq.enqueue(55,8);
+		prq.enqueue(65,1);
+		prq.enqueue(45,4);
+		prq.enqueue(85,11);
+		prq.enqueue(89,23);
+		
+		for(int i=0;i<prq.size;i++) {
+			System.out.print(prq.pq[i].val+" ");
+		}
+		
+		Node min=prq.dequeue();
+		System.out.println("\n\n"+min.val+"\n");
+		
+		for(int i=0;i<prq.size;i++) {
+			System.out.print(prq.pq[i].val+" ");
+		}
+		
+	}
+}
