@@ -1,0 +1,100 @@
+import java.util.*;
+public class BinaryHeap {
+	int[] bh;
+	int size, limit;
+	BinaryHeap(int limit){
+		this.limit = limit;
+		bh = new int[this.limit];
+		this.size=0;
+	}
+	
+	//    Creating a Max Binary Heap ...
+	
+	void insert(int val) {
+		if(this.size < this.limit) {
+			bh[this.size++] = val;
+			if(this.size > 1) {
+				int child = this.size-1;
+				while(child > 0) {
+					int parent = (child-1)/2;
+					if(bh[parent]<bh[child]) {
+						int tmp = bh[child];
+						bh[child] = bh[parent];
+						bh[parent] = tmp;
+						child = parent;
+					}else {
+						break;
+					}
+				}
+			}
+		}else {
+			System.out.println("No Space Left");
+		}
+	}
+	
+	int getMax() {
+		if(this.size>0) {
+			int ans = bh[0];
+			bh[0] = bh[this.size-1];
+			this.size--;
+			
+			int parent = 0;
+			while(parent < this.size-1) {
+				int Lchild = 2*parent+1;
+				int Rchild = 2*parent+2;
+				
+				int swap = 0, ind = 0;
+				if(Lchild<this.size) {
+					if(bh[Lchild] > bh[parent]) {				
+					swap = bh[Lchild];
+					ind = Lchild;
+					}
+				}else {
+					break;
+				}
+				if(Rchild<this.size && (swap == 0 || (bh[Rchild]>bh[Lchild]))) {
+					if(bh[Rchild] > bh[parent]) {
+						swap = bh[Rchild];
+						ind = Rchild;
+					}
+				}
+				if(swap == 0) {
+					break;
+				}
+				bh[ind] = bh[parent];
+				bh[parent] = swap;
+				parent = ind;
+			}
+			return ans;
+		}else {
+			return -1;
+		}
+	}
+	
+	public static void main(String[] args) {
+		BinaryHeap bhp = new BinaryHeap(10);
+		bhp.insert(41);
+		bhp.insert(39);
+		bhp.insert(33);
+		bhp.insert(18);
+		bhp.insert(27);
+		bhp.insert(12);
+		bhp.insert(55);
+		bhp.insert(65);
+		bhp.insert(45);
+		bhp.insert(85);
+		bhp.insert(89);
+		
+		for(int i=0;i<bhp.size;i++) {
+			System.out.print(bhp.bh[i]+" ");
+		}
+		
+		int max=bhp.getMax();
+		System.out.println("\n\n"+max+"\n");
+		
+		for(int i=0;i<bhp.size;i++) {
+			System.out.print(bhp.bh[i]+" ");
+		}
+		
+	}
+}
