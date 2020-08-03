@@ -1,0 +1,143 @@
+import java.util.*;
+
+public class Graph {
+
+	HashMap<String, ArrayList<String>> g;
+
+	Graph(){
+		g = new HashMap<>();
+	}
+
+	void addVertex(String V) {
+		if (g.get(V) == null)
+			g.put(V, new ArrayList<String>());
+	}
+
+	void removeVertex(String V) {
+		for (int i = 0; i < g.get(V).size(); i++) {
+			g.get(g.get(V).get(i)).remove(V);
+		}
+		g.remove(V);
+	}
+
+	void addEdge(String v1, String v2) {
+		g.get(v1).add(v2);
+		g.get(v2).add(v1);
+	}
+
+	void removeEdge(String v1, String v2) {
+		g.get(v1).remove(v2);
+		g.get(v2).remove(v1);
+	}
+	
+	void dfsR(String start) {
+		ArrayList<String> res = new ArrayList<>();
+		HashMap<String,Boolean> visited = new HashMap<>();
+		
+		for(Map.Entry<String, ArrayList<String>> me : g.entrySet()) {
+			if(visited.get(me.getKey())==null)
+				dfsRHelper(me.getKey(),visited,res);
+		}		
+	}
+	
+	void dfsRHelper(String start, HashMap<String,Boolean> visited, ArrayList<String> res) {
+		if(start==null)
+			return;
+		visited.put(start, true);
+		res.add(start);
+		System.out.print(start+" ");
+
+		Iterator<String> itr = g.get(start).listIterator();
+		while(itr.hasNext()) {
+			String chk = itr.next();
+			if(visited.get(chk) == null) {
+					dfsRHelper(chk,visited,res);
+			}
+		}		
+	}
+	
+	void dfsItr(String start) {
+		Stack<String> stack = new Stack<>();
+		HashMap<String,Boolean> visited = new HashMap<>();
+		stack.push(start);
+		visited.put(start, true);
+		String str;
+		
+		while(!stack.empty()) {
+			str = stack.pop();
+			System.out.print(str+" ");
+			Iterator<String> itr = g.get(str).listIterator();
+			while(itr.hasNext()) {
+				String chk = itr.next();
+				if(visited.get(chk)==null) {
+					visited.put(chk, true);
+					stack.push(chk);
+				}
+			}
+		}
+	}
+	
+	void bfs(String start) {
+		Queue<String> queue = new LinkedList<>();
+		HashMap<String,Boolean> visited = new HashMap<>();
+		queue.add(start);
+		visited.put(start, true);
+		String str;
+		
+		while(!queue.isEmpty()) {
+			str = queue.remove();
+			System.out.print(str+" ");
+			Iterator<String> itr = g.get(str).listIterator();
+			while(itr.hasNext()) {
+				String chk = itr.next();
+				if(visited.get(chk)==null) {
+					visited.put(chk, true);
+					queue.add(chk);
+				}
+			}
+		}
+	}
+
+	public static void main(String[] args) {
+		Graph gp = new Graph();
+
+		gp.addVertex("A");
+		gp.addVertex("B");
+		gp.addVertex("C");
+		gp.addVertex("D");
+		gp.addVertex("E");
+		gp.addVertex("F");
+
+		System.out.println(gp.g);
+
+		gp.addEdge("A", "B");
+		gp.addEdge("A", "C");
+		gp.addEdge("B", "D");
+		gp.addEdge("C", "E");
+		gp.addEdge("D", "E");
+		gp.addEdge("D", "F");
+		gp.addEdge("E", "F");
+
+		System.out.println(gp.g);
+
+		/*
+		gp.removeEdge("D", "F");
+		
+		System.out.println(gp.g);
+		
+		gp.removeVertex("D");
+		
+		System.out.println(gp.g);
+		*/
+		System.out.println("DFS Recusrive -");
+		gp.dfsR("A");
+		/*
+		 * for(int i=0;i<res.size();i++) { System.out.print(res.get(i)+" "); }
+		 */
+		System.out.println("\n\nDFS Iterative -");
+		gp.dfsItr("A");
+		
+		System.out.println("\n\nBFS -");
+		gp.bfs("A");
+	}
+}
