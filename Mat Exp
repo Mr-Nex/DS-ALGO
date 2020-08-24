@@ -1,0 +1,20 @@
+~ Matrix Exponentiation
+
+When the problem consists of a recursive relation and the target is to find some desired state (nth value), then Matrix Exponentiation comes in handy.
+The goal is to create a component matrix M which will lead us to the desired state from a set of already known states.
+
+Say, we already know K states of a relation and we want to find the (K+1)th state,
+
+Now, we have to create two things-
+one is a vector A of size (Kx1) using the known states, another is our component matrix of size (KxK).
+
+With the help of above two, our goal is to create B of (Kx1) size, which will contain the set of next states.
+i.e.,                   [M x A = B]
+
+=>                 M    x   | f(n) |    =   | f(n+1) |
+                            |f(n-1)|        |  f(n)  |
+                            |  ..  |        |   ..   |
+                            |  ..  |        |   ..   |
+                            |f(n-k)|        |f(n-k+1)|
+                            
+Now, all we need is to design M,
