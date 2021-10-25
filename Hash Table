@@ -1,0 +1,116 @@
+// Hash table implementation using Separate Chaining method for collision resolution
+
+public class hashTable<K,V> {
+	
+	private ArrayList<hashNode<K,V>> bucket;	
+	private int capacity;
+	private int size;
+	
+	hashTable(){
+		bucket = new ArrayList<>();
+		size = 0;
+		capacity = 10;
+		
+		//creating empty chains
+		for(int i=0;i<capacity;i++){
+            bucket.add(null);
+        }
+	}
+	
+	int size() {
+		return this.size();
+	}
+	
+	boolean isEmpty() {
+		return size==0;
+	}
+	
+	int getBucketIndex(K key) {
+		int hashCode = key.hashCode();
+		int ind = hashCode%size;
+		return Math.abs(ind);
+	}
+	
+	void add(K key, V value) {
+		int bucketIndex = getBucketIndex(key);
+		hashNode head = bucket.get(bucketIndex);
+		
+		while(head!=null) {
+			if(head.key==key) {
+				head.value = value;
+				return;
+			}
+			head = head.next;
+		}
+		size++;
+		hashNode newNode = new hashNode(key,value);
+		head = bucket.get(bucketIndex);
+		newNode.next = head;
+		bucket.set(bucketIndex, newNode);
+		
+		// Now, checking if we need to increase bucketsize or not
+		if((size*1.0)/capacity >= 0.7) {
+			size=0;
+			ArrayList<hashNode<K,V>> tmp = bucket;
+			bucket = new ArrayList<>();
+			capacity *= 2;
+			
+			for(int i=0;i<capacity;i++) {
+				bucket.add(null);
+			}
+			
+			// copying into new bucket
+			for(hashNode<K,V> node : tmp) {
+				while(node != null) {
+					add(node.key, node.value);
+					node = node.next;
+				}
+			}
+		}
+	}
+	
+	V get(K key) {
+		int bucketIndex = getBucketIndex(key);
+		hashNode<K,V> head = bucket.get(bucketIndex);
+		while(head!=null) {
+			if(head.key==key)
+				return head.value;
+			head = head.next;
+		}
+		return null;
+	}
+	
+	V remove(K key) {
+		int bucketIndex = getBucketIndex(key);
+		hashNode<K,V> head = bucket.get(bucketIndex);
+		hashNode<K,V> prev = null;
+		while(head != null) {
+			if(head.key==key) {
+				break;
+			}
+			prev = head;
+			head = head.next;
+		}
+		if(head==null)
+			return null;
+		if(prev!=null) {
+			size--;
+			prev.next = head.next;
+		}else {
+			bucket.set(bucketIndex, head.next);
+		}
+		return head.value;
+	}
+	
+	
+	class hashNode<K,V>{
+		K key;
+		V value;
+		hashNode<K,V> next;
+		
+		hashNode(K k, V  v){
+			key = k;
+			value = v;
+		}
+	}
+}
