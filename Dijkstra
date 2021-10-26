@@ -1,0 +1,121 @@
+public class Dijkstra {
+	
+	public static void main(String[] args) {
+		Node nodeA = new Node("A");
+		Node nodeB = new Node("B");
+		Node nodeC = new Node("C");
+		Node nodeD = new Node("D"); 
+		Node nodeE = new Node("E");
+		Node nodeF = new Node("F");
+
+		nodeA.addDestination(nodeB, 10);
+		nodeA.addDestination(nodeC, 15);
+
+		nodeB.addDestination(nodeD, 12);
+		nodeB.addDestination(nodeF, 10);
+
+		nodeC.addDestination(nodeE, 10);
+
+		nodeD.addDestination(nodeE, 2);
+		nodeD.addDestination(nodeF, 1);
+
+		nodeF.addDestination(nodeE, 5);
+		nodeF.addDestination(nodeD, 1);
+
+		Graph graph = new Graph();
+
+		graph.addNode(nodeA);
+		graph.addNode(nodeB);
+		graph.addNode(nodeC);
+		graph.addNode(nodeD);
+		graph.addNode(nodeE);
+		graph.addNode(nodeF);
+
+		graph = new Dijkstra().calculateShortestPathFromSource(graph, nodeA);
+		
+		for(Node n : graph.nodes) {
+			System.out.println(n.getName() +" "+ n.getDistance());
+		}
+	}
+	
+	
+	
+	
+	
+	void calculateMinDistance(Node source, Node curr, Integer edgeWeight) {
+		Integer sourceDistance = source.getDistance();
+		if(sourceDistance+edgeWeight < curr.distance) {
+			curr.setDistance(sourceDistance+edgeWeight);
+			LinkedList<Node> shortestPath = new LinkedList<>(source.shortestPath);
+			shortestPath.add(source);
+			curr.shortestPath = shortestPath;
+		}
+	}
+	
+	public Graph calculateShortestPathFromSource(Graph gp, Node source) {
+		source.setDistance(0);
+		
+		Set<Node> settled = new HashSet<>();
+		Set<Node> unsettled = new HashSet<>();
+		unsettled.add(source);
+		
+		while(!unsettled.isEmpty()) {
+			Node curr = getLowestDistanceNode(unsettled);
+			unsettled.remove(curr);
+			for(Map.Entry<Node, Integer> me : curr.adjNodes.entrySet()) {
+				if(!settled.contains(me.getKey())) {
+					calculateMinDistance(curr,me.getKey(),me.getValue());
+					unsettled.add(me.getKey());
+				}
+			}
+			settled.add(curr);
+		}
+		return gp;
+	}
+	
+	public Node getLowestDistanceNode(Set<Node> unsettled) {
+		Node lowest = null;
+		Integer min = Integer.MAX_VALUE;
+		for(Node n : unsettled) {
+			if(n.getDistance()<min) {
+				min = n.getDistance();
+				lowest = n;
+			}
+		}
+		return lowest;
+	}
+}
+
+class Graph{
+	Set<Node> nodes = new HashSet<>();
+	void addNode(Node n) {
+		nodes.add(n);
+	}
+}
+
+class Node{
+	private String name;
+	List<Node> shortestPath = new LinkedList<>();
+	Integer distance = Integer.MAX_VALUE;
+	Map<Node,Integer> adjNodes = new HashMap<>();
+	
+	public void addDestination(Node destination, Integer distance) {
+		adjNodes.put(destination, distance);
+	}
+	
+	Node(String key){
+		name = key;
+	}
+	
+	public void setDistance(Integer d) {
+		this.distance = d;
+	}
+	
+	public Integer getDistance() {
+		return this.distance;
+	}
+	
+	public String getName() {
+		return this.name;
+	}
+}
