@@ -15,9 +15,9 @@ public class trie {
 				node.put(c, new TrieNode());
 			}
 			node = node.get(c); //move to reference Trie
-			node.cp++;
+			node.increasePrefix();
 		}
-		node.setEnd();
+		node.increaseEnd();
 	}
 	
 	// TC -> O(length)
@@ -43,6 +43,18 @@ public class trie {
 		}
 		return node.cp;
 	}
+	
+	void erase(String word) {
+		TrieNode node = root;
+		for(int i=0;i<word.length();i++) {
+			char c = word.charAt(i);
+			if(!node.containsKey(c))
+				return;
+			node = node.get(c);
+			node.reducePrefix();
+		}
+		node.deleteEnd();
+	}
 		
 	public static void main(String[] args) {
 		trie t = new trie();
@@ -55,6 +67,8 @@ public class trie {
 		t.insert("back");
 		
 		System.out.println(t.countWords("apple"));
+		System.out.println(t.countWords("app"));
+		t.erase("app");
 		System.out.println(t.countWords("app"));
 		System.out.println(t.countWords("appp"));
 		System.out.println(t.countWords("bag"));
@@ -88,11 +102,20 @@ class TrieNode{
 		links[c-'a'] = node;
 	}
 	
-	void setEnd() {
+	void increaseEnd() {
 		ew++;
 	}
 	
-	boolean isEnd() {
-		return ew>0;
+	void increasePrefix() {
+		cp++;
+	}
+	
+	void reducePrefix() {
+		cp--;
+	}
+	
+	void deleteEnd() {
+		ew--;
 	}
 }
+
