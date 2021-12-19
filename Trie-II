@@ -1,0 +1,98 @@
+public class trie {
+	
+	private static TrieNode root;
+	
+	trie(){
+		root = new TrieNode();
+	}
+	
+	// TC -> O(length)
+	void insert(String word) {
+		TrieNode node = root;
+		for(int i=0;i<word.length();i++) {
+			char c = word.charAt(i);
+			if(!node.containsKey(c)) {
+				node.put(c, new TrieNode());
+			}
+			node = node.get(c); //move to reference Trie
+			node.cp++;
+		}
+		node.setEnd();
+	}
+	
+	// TC -> O(length)
+	int countWords(String word) {
+		TrieNode node = root;
+		for(int i=0;i<word.length();i++) {
+			char c = word.charAt(i);
+			if(!node.containsKey(c))
+				return 0;
+			node = node.get(c);
+		}
+		return node.ew;
+	}
+	
+	// TC -> O(length)
+	int cntStartsWith(String prefix) {
+		TrieNode node = root;
+		for(int i=0;i<prefix.length();i++) {
+			char c = prefix.charAt(i);
+			if(!node.containsKey(c))
+				return 0;
+			node = node.get(c);
+		}
+		return node.cp;
+	}
+		
+	public static void main(String[] args) {
+		trie t = new trie();
+		
+		t.insert("apple");
+		t.insert("appl");
+		t.insert("app");
+		t.insert("app");
+		t.insert("bag");
+		t.insert("back");
+		
+		System.out.println(t.countWords("apple"));
+		System.out.println(t.countWords("app"));
+		System.out.println(t.countWords("appp"));
+		System.out.println(t.countWords("bag"));
+		
+		System.out.println(t.cntStartsWith("a"));
+		System.out.println(t.cntStartsWith("ap"));
+		System.out.println(t.cntStartsWith("appl"));
+		System.out.println(t.cntStartsWith("appce"));
+		System.out.println(t.cntStartsWith("ba"));
+		System.out.println(t.cntStartsWith("bc"));
+	}
+}
+
+class TrieNode{
+	TrieNode[] links = new TrieNode[26];
+	int ew=0, cp=0;
+	
+	public TrieNode() {
+		
+	}
+	
+	boolean containsKey(char c) {
+		return links[c-'a']!=null;
+	}
+	
+	TrieNode get(char c) {
+		return links[c-'a'];
+	}
+	
+	void put(char c, TrieNode node) {
+		links[c-'a'] = node;
+	}
+	
+	void setEnd() {
+		ew++;
+	}
+	
+	boolean isEnd() {
+		return ew>0;
+	}
+}
