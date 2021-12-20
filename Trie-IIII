@@ -1,0 +1,110 @@
+public class trie {
+	
+	private static TrieNode root;
+	
+	trie(){
+		root = new TrieNode();
+	}
+	
+	// TC -> O(length)
+	void insert(int num) {
+		TrieNode node = root;
+		for(int i=31;i>=0;i--) {
+			int bit = (num>>i)&1;
+			if(!node.containsKey(bit)) {
+				node.put(bit, new TrieNode());
+			}
+			node = node.get(bit);
+		}
+	}
+	
+	int getMax(int num) {
+		TrieNode node = root;
+		int max=0;
+		for(int i=31;i>=0;i--) {
+			int bit = (num>>i)&1;
+			if(node.containsKey(1-bit)) {
+				max = max | (1<<i);
+				node = node.get(1-bit);
+			}else
+				node = node.get(bit);
+		}
+		
+		return max;
+	}
+	
+	ArrayList<Integer> maxXorQueries(int[] arr, ArrayList<ArrayList<Integer>> q){
+		int ind=0;
+		int n = arr.length;
+		trie t = new trie();
+		ArrayList<Integer> res = new ArrayList<>(q.size());
+		for(int i=0;i<q.size();i++) {
+			res.add(-1);
+		}
+		
+		for(int i=0;i<q.size();i++) {
+			while(ind<n && arr[ind]<=q.get(i).get(0)) {
+				t.insert(arr[ind++]);
+			}
+			
+			int qind = q.get(i).get(2);
+			
+			if(ind!=0) {
+				res.set(qind, t.getMax(q.get(i).get(1)));
+			}else
+				res.set(qind, -1);
+		}
+		
+		return res;
+	}
+		
+	public static void main(String[] args) {
+		trie t = new trie();
+		
+		int[] a = {1,3,2,5,4};
+		
+		Arrays.sort(a);
+		ArrayList<ArrayList<Integer>> q = new ArrayList<>();
+		int[][] queries = new int[][] {{4,3},{5,4},{2,5},{3,1}};
+		
+		for(int i=0;i<queries.length;i++) {
+			ArrayList<Integer> li = new ArrayList<>();
+			li.add(queries[i][1]);
+			li.add(queries[i][0]);
+			li.add(i);
+			q.add(li);
+		}
+
+		Collections.sort(q, new Comparator<ArrayList<Integer>>() {
+
+			public int compare(ArrayList<Integer> o1, ArrayList<Integer> o2) {
+				return o1.get(0).compareTo(o2.get(0));
+			}
+			
+		});
+		System.out.println(t.maxXorQueries(a, q));
+				
+	}
+}
+
+class TrieNode{
+	TrieNode[] links = new TrieNode[2];
+	
+	TrieNode() {
+		
+	}
+	
+	boolean containsKey(int ind) {
+		return links[ind]!=null;
+	}
+	
+	TrieNode get(int ind) {
+		return links[ind];
+	}
+	
+	void put(int ind, TrieNode node) {
+		links[ind] = node;
+	}
+	
+	
+}
