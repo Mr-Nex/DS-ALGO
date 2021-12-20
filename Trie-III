@@ -1,0 +1,72 @@
+public class trie {
+	
+	private static TrieNode root;
+	
+	trie(){
+		root = new TrieNode();
+	}
+	
+	// TC -> O(length)
+	void insert(int num) {
+		TrieNode node = root;
+		for(int i=31;i>=0;i--) {
+			int bit = (num>>i)&1;
+			if(!node.containsKey(bit)) {
+				node.put(bit, new TrieNode());
+			}
+			node = node.get(bit);
+		}
+	}
+	
+	int getMax(int num) {
+		TrieNode node = root;
+		int max=0;
+		for(int i=31;i>=0;i--) {
+			int bit = (num>>i)&1;
+			if(node.containsKey(1-bit)) {
+				max = max | (1<<i);
+				node = node.get(1-bit);
+			}else
+				node = node.get(bit);
+		}
+		
+		return max;
+	}
+		
+	public static void main(String[] args) {
+		trie t = new trie();
+		
+		int[] a = {9,8,7,5,4};
+		int[] b = {4,5,7,8,9};
+		
+		for(int i=0;i<a.length;i++) {
+			t.insert(a[i]);
+		}
+		for(int i=0;i<b.length;i++) {
+			System.out.println(t.getMax(b[i]));
+		}
+				
+	}
+}
+
+class TrieNode{
+	TrieNode[] links = new TrieNode[2];
+	
+	TrieNode() {
+		
+	}
+	
+	boolean containsKey(int ind) {
+		return links[ind]!=null;
+	}
+	
+	TrieNode get(int ind) {
+		return links[ind];
+	}
+	
+	void put(int ind, TrieNode node) {
+		links[ind] = node;
+	}
+	
+	
+}
